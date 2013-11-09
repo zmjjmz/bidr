@@ -121,7 +121,7 @@ class RegistrationForm(Form):
 	confirmEmail = StringField('Repeat Email Address', [validators.InputRequired(message=(u'You must retype your email address.')), validators.Length(min=6, max=35, message=(u'An email address must be atleast 6 and no more than 35 characters.')), validators.Email(message=(u'Invalid email address format.'))])
 	password = PasswordField('Password', [validators.InputRequired(message=(u'You must supply a password.')), validators.Length(min=8, max=32, message=(u'A password must be atleast 8 and no more than 32 characters.')), validators.EqualTo('confirmPassword', message='Passwords must match.')])
 	confirmPassword = PasswordField('Repeat Password', [validators.InputRequired(message=(u'You must retype your password.')), validators.Length(min=8, max=32, message=(u'A password must be atleast 8 and no more than 32 characters.'))])
-	accept_rules = BooleanField('I accept that Brendan has a huge dick.', [validators.InputRequired(message=(u'You must agree to the terms.'))])
+	accept_rules = BooleanField('I accept that YHack has made me really tired.', [validators.InputRequired(message=(u'You must agree to the terms.'))])
 	submit = SubmitField('Register')
 
 class LoginForm(Form):
@@ -136,7 +136,8 @@ class AuctionForm(Form):
 	expiration = DateTimeField("Expiration", [validators.InputRequired(message=(u'You must supply an auction expiration time.'))])
 	min_price = DecimalField("Minimum Price", places=2)
 	isPublic = BooleanField("List publicly")
-	submit = SubmitField('Create')
+	group = StringField("Publicity: Group Name")
+	submit = SubmitField('Create Auction')
 
 class editUserPasswordForm(Form):
 	currentPassword = PasswordField('Current Password', [validators.InputRequired(message=(u'You must supply your current password.')), validators.Length(min=8, max=32, message=(u'Your current password will be atleast 8 and no more than 32 characters.'))])
@@ -266,7 +267,8 @@ def oauth_authorized():
 def dashboard():
 	''' list active auctions '''
 	if 'authenticated' in session:
-		return render_template('dashboard.html')
+		user = User.objects(username=session['username']).first()
+		return render_template('dashboard.html', user=user)
 	else:
 		flash("You must authenticate first.", category="warning")
 		return redirect("/login")
@@ -277,13 +279,23 @@ def createAuction():
 		if request.method == 'POST':
 			form = AuctionForm(request.form)
 			if form.validate():
-				creator = User.objects(username=session['username']).first()
-				isPublic = False # TODO: the default bool is being weird, so using a simple workaround for now.
-				if 'isPublic' in request.form:
-					isPublic = request.form['isPublic']
-				auction = Auction(creator=creator, min_price=request.form['min_price'], title=request.form['title'], description=request.form['description'], tags=["Foo, Bar"], expiration=request.form['expiration'], isPublic=isPublic).save()
-				flash("Successfully created auction.")
-				return redirect('auction/%s' % str(auction.id))
+				creator = User.objects(username=session['username'])
+				group = Group.objects(name=request.form['group'])
+				if len(group):
+					isPublic = False # TODO: the default bool is being weird, so using a simple workaround for now.
+					if 'isPublic' in request.form:
+						isPublic = request.form['isPublic']
+					auction = Auction(creator=creator.first(), min_price=request.form['min_price'], title=request.form['title'], description=request.form['description'], tags=["Foo, Bar"], expiration=request.form['expiration'], isPublic=isPublic, isRunning=True).save()
+					# Add creator to auctions available
+					creator.update_one(add_to_set__auctions_available=auction)
+					# Add all in group as well
+					for index, user in enumerate(group):
+						User.objects(id=user.id).update_one(add_to_set__auctions_available=auction)
+					flash("Successfully created auction.")
+					return redirect('auction/%s' % str(auction.id))
+				else:
+					flash("Invalid Group Supplied.")
+					return render_template('createAuction.html', form=form) 
 			else:
 				return render_template('createAuction.html', form=form)
 		elif request.method == 'GET':
@@ -309,9 +321,10 @@ def auctionListing(auction_id):
 				valid = True
 				break
 		if valid:
-			return "You may view this auction."
+			return render_template('auctionView.html', auction=match)
 		else:
-			return "You are not allowed to view this auction."
+			flash("You are not allowed to view this auction.")
+			redirect('/')
 	else:
 		flash("You must authenticate first.", category="warning")
 		return redirect("/login")
@@ -464,9 +477,12 @@ def viewGroup(group_id):
 			if request.method == 'POST':
 				anAddToGroupForm = addToGroupForm(request.form)
 				if anAddToGroupForm.validate():
-					user = User.objects(username=request.form['username'])
-					Group.objects(id=group_id).update_one(add_to_set__users=user)
-					flash("Good Job adding a user to a group.")
+					aUser = User.objects(username=request.form['username'])
+					if len(aUser):
+						Group.objects(id=group_id).update_one(add_to_set__users=aUser.first())
+						flash("Good Job adding a user to a group.")
+					else:
+						flash("Invalid Username.")
 					form = addToGroupForm()
 					return render_template('addToGroup.html', form=form, user=user, group=group)
 				else:

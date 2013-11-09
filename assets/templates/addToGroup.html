@@ -15,4 +15,9 @@
         {% endif %}
         <div>{{ form.submit() }}</div>
     </form>
+    <ul class='groupmemberListing'>
+        {% for user in group.users %}
+            <li>One member of this group: {{ user.username }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -29,6 +29,10 @@
         {% if form.isPublic.errors %}
             <ul class="errors">{% for error in form.isPublic.errors %}<li>{{ error }}</li>{% endfor %}</ul>
         {% endif %}
+        <div>{{ form.group.label }}: {{ form.group() }}</div>
+        {% if form.group.errors %}
+            <ul class="errors">{% for error in form.group.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
         <div>{{ form.submit() }}</div>
     </form>
 {% endblock %}
