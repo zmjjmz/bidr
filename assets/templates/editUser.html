@@ -16,7 +16,7 @@
     </ul>
     <ul class='friendsListing'>
         {% for friend in user.friends %}
-            <li>You have a friend named: {{ friend.username }}</li>
+            <li>You have a friend named: <a href="/user/{{friend.username}}">{{ friend.username }}</a></li>
         {% endfor %}
     </ul>
     <ul class='groupListing'>

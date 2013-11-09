@@ -52,7 +52,7 @@
 	        </ul>
 	        <ul class="nav navbar-nav navbar-right">
 	          <li class="dropdown">
-	          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="{{ url_for('static', filename='images/00000000000000000000000000000000.png') }}" /> Hello, Anonymous <b class="caret"></b></a>
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="{{ url_for('static', filename='images/00000000000000000000000000000000.png') }}" /> Hello, {% if 'authenticated' in session %} {{ session['username'] }} {% else %} Anonymous {% endif %}<b class="caret"></b></a>
 	          <ul class="dropdown-menu">
 	            <li><a href="#">Log In</a></li>
 	            <li class="hidden"><a href="#">Log Out</a></li>
@@ -78,6 +78,7 @@
 			{% endif %}
 		{% endwith %}
 	{% endblock %}
+	<div class="col-lg-12 well well-lg text-center">
 	{% block content %}
       <div class="container">
         <div class="col-lg-12 well well-lg text-center">
@@ -102,33 +103,34 @@
             <h3 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Connect with Friends</h3>
           </div>
           <div class="panel-body">
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          	Butcher sartorial est organic, keffiyeh sustainable mustache chia. Chambray artisan PBR, gluten-free cray occupy paleo ethical Terry Richardson anim. Cardigan blog butcher, biodiesel commodo cupidatat sapiente leggings reprehenderit veniam 3 wolf moon asymmetrical quinoa fashion axe 
           </div>
         </div>
       </div>
       <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
         <div class="panel panel-warning">
           <div class="panel-heading">
-            <h3 class="panel-title"><span class="glyphicon glyphicon-eye-open"></span> Manage Listings</h3>
+            <h3 class="panel-title"><span class="glyphicon glyphicon-eye-open"></span> Manage Auctions</h3>
           </div>
           <div class="panel-body">
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            Quis Tonx consequat dolore Brooklyn eiusmod 90s sartorial, literally nostrud craft beer. Bitters vero mollit shabby chic hella yr. Occaecat enim irony fanny pack labore aute. Gluten-free narwhal Echo Park flannel squid, ennui raw denim sustainable id velit sartorial Schlitz beard.
           </div>
         </div>
       </div>
       <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
         <div class="panel panel-success">
           <div class="panel-heading">
-            <h3 class="panel-title"><span class="glyphicon glyphicon-briefcase"></span> Invest in your Future</h3>
+            <h3 class="panel-title"><span class="glyphicon glyphicon-briefcase"></span> Bid with Confidence</h3>
           </div>
           <div class="panel-body">
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            Hella mlkshk consequat shabby chic Austin chillwave organic paleo, art party hashtag tousled quis sed anim odio. Fugiat dreamcatcher chillwave, sartorial aliqua shabby chic officia. Gastropub vero put a bird on it magna, et forage laboris delectus trust fund. Biodiesel vinyl labore
           </div>
         </div>
       </div>
       </div>
     </div>
     {% endblock %}
+    </div>
     </div>
     <div id="footer">
         {% block footer %}

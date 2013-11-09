@@ -8,24 +8,18 @@
 {% endblock %}
 {% block content %}
     <h1>{{session['username']}}'s dashboard</h1>
-    <p><a href="/user/{{session['username']}}">View</a> or <a href="/user/{{session['username']}}/settings">edit</a> profile or <a href="/logout">logout</a>.</p>
-
-     <ul>
-        <li><a href="/auction/create"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Create an Auction</button></a></li>
-    </ul>
-
-    <ul class='auctionListing'>
-        {% for auction in user.auctions_available %}
-            <li>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
-        {% endfor %}
-        {% for auction in user.auctions_in %}
-            <li>"In" Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
-        {% endfor %}
-        {% for auction in user.auctions_pending %}
-            <li>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
-        {% endfor %}
-        {% for auction in user.auctions_past %}
-            <li>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></li>
-        {% endfor %}
-    </ul>
+    <p><a href="/user/{{session['username']}}">View</a> or <a href="/user/{{session['username']}}/settings">edit</a> profile or <a href="/logout">logout</a></p>
+    <p><a href="/auction/create"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Create an Auction</button></a></p>
+    {% for auction in user.auctions_available %}
+        <div>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></div>
+    {% endfor %}
+    {% for auction in user.auctions_in %}
+        <div>"In" Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></div>
+    {% endfor %}
+    {% for auction in user.auctions_pending %}
+        <div>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></div>
+    {% endfor %}
+    {% for auction in user.auctions_past %}
+        <div>Available Auction: <a href="/auction/{{ auction.id }}">{{ auction.title }}</a></div>
+    {% endfor %}
 {% endblock %}
