@@ -21,7 +21,7 @@ log = logging.getLogger('BIDRLOG')
 
 # Imports - Dependancies
 try:
-	from flask import flask
+	from flask import Flask
 	app = Flask(__name__)
 except ImportError:
 	log.error("Failed to import Flask Library. Install it: http://flask.pocoo.org/")
