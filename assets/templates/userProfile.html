@@ -1,0 +1,18 @@
+{% extends "index.html" %}
+{% block title %}{{user.username}}'s Profile{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>{{user.username}}'s profile</h1>
+    <div>
+        <ul>
+            <li>Email Address: {{user.username}}</li>
+            <li>Password Hash: {{user.password_hash}}</li>
+        </ul>
+        <p><a href="/user/{{user.username}}/settings">Edit</a> this user's profile.</p>
+    </div>
+{% endblock %}

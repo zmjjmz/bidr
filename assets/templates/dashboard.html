@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+{% block title %}{{session['username']}}'s Dashboard{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>{{session['username']}}'s dashboard</h1>
+    <p><a href="/user/{{session['username']}}">View</a> or <a href="/user/{{session['username']}}/settings">edit</a> profile or <a href="/logout">logout</a>.</p>
+{% endblock %}

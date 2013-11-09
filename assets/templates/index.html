@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC>
+<html lang="en">
+<head>
+	{% block head %}
+    	<link rel="stylesheet" href="style.css" />
+    	<title>Bidr - {% block title %}{% endblock %} - Bid with friends</title>
+    {% endblock %}
+</head>
+<body>
+	<div id="content">
+	{% block flashErrors %}
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+	{% endblock %}
+	{% block content %}
+		<h1>Welcome to <b>Bidr</b></h1>
+		{% if 'authenticated' in session %}
+			<p>Hello, {{ session['username']}}. View your <a href="/dashboard">dashboard</a>.</p>
+		{% else %}
+			<p><a href="/register">Register</a> an account or <a href="/login">login</a> to an existing account.</p>
+		{% endif %}
+    {% endblock %}
+    </div>
+    <div id="footer">
+        {% block footer %}
+        	&copy; Copyright 2013 - <a href="/">Bidr</a>
+        {% endblock %}
+    </div>
+</body>
+</html>

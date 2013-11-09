@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% block title %}Register Account{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Register an account with Bidr using the form provided.</h1>
+    <form method="POST" action="/register">
+        <div>{{ form.username.label }}: {{ form.username() }}</div>
+        {% if form.username.errors %}
+            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.email.label }}: {{ form.email() }}</div>
+        {% if form.email.errors %}
+            <ul class="errors">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.confirmEmail.label }}: {{ form.confirmEmail() }}</div>
+        {% if form.confirmEmail.errors %}
+            <ul class="errors">{% for error in form.confirmEmail.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.password.label }}: {{ form.password() }}</div>
+        {% if form.password.errors %}
+            <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.confirmPassword.label }}: {{ form.confirmPassword() }}</div>
+        {% if form.confirmPassword.errors %}
+            <ul class="errors">{% for error in form.confirmPassword.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.accept_rules.label }}: {{ form.accept_rules() }}</div>
+        {% if form.accept_rules.errors %}
+            <ul class="errors">{% for error in form.accept_rules.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.submit() }}</div>
+    </form>
+{% endblock %}

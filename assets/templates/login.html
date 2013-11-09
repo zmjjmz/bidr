@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Login to Bidr using the form provided.</h1>
+    <form method="POST" action="/login">
+        <div>{{ form.username.label }}: {{ form.username() }}</div>
+        {% if form.username.errors %}
+            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.password.label }}: {{ form.password() }}</div>
+        {% if form.password.errors %}
+            <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.submit() }}</div>
+    </form>
+{% endblock %}
