@@ -41,37 +41,42 @@ app.debug = True
 # Load default config and override config from an environment variable
 '''
 app.config.update(dict(
-    DATABASE='/db/bidr.db',
-    DEBUG=True,
-    SECRET_KEY='VPzMCCNUT5FWj6qD', # randomly generated
-    USERNAME='bidr',
-    PASSWORD='default'
+	DATABASE='/db/bidr.db',
+	DEBUG=True,
+	SECRET_KEY='VPzMCCNUT5FWj6qD', # randomly generated
+	USERNAME='bidr',
+	PASSWORD='default'
 ))
 '''
 
 @app.route('/')
 def index():
-    if session.get('venmo_token'):
-        return 'Your Venmo token is %s' % session.get('venmo_token')
-    else:
-        return redirect('https://api.venmo.com/oauth/authorize?client_id=%s&scope=make_payments,access_profile&response_type=code' % CONSUMER_ID)
+	if session.get('venmo_token'):
+		return 'Your Venmo token is %s' % session.get('venmo_token')
+	else:
+		return redirect('https://api.venmo.com/oauth/authorize?client_id=%s&scope=make_payments,access_profile&response_type=code' % CONSUMER_ID)
 
 @app.route('/auth')
 def oauth_authorized():
-    AUTHORIZATION_CODE = request.args.get('code')
-    data = {
-        "client_id":CONSUMER_ID,
-        "client_secret":CONSUMER_SECRET,
-        "code":AUTHORIZATION_CODE
-        }
-    url = "https://api.venmo.com/oauth/access_token"
-    response = requests.post(url, data)
-    response_dict = response.json()
-    access_token = response_dict.get('access_token')
-    user = response_dict.get('user')
+	AUTHORIZATION_CODE = request.args.get('code')
+	data = {
+		"client_id":CONSUMER_ID,
+		"client_secret":CONSUMER_SECRET,
+		"code":AUTHORIZATION_CODE
+		}
+	url = "https://api.venmo.com/oauth/access_token"
+	response = requests.post(url, data)
+	response_dict = response.json()
+	access_token = response_dict.get('access_token')
+	user = response_dict.get('user')
 
-    session['venmo_token'] = access_token
-    session['venmo_username'] = user['username']
+	session['venmo_token'] = access_token
+	session['venmo_username'] = user['username']
+
+	if session.get('venmo_token'):
+		return 'Success! Token is %s' % session.get('venmo_token')
+	else:
+		return "Failed to get a token bro. Fix dat shit now."
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+	app.run(host='0.0.0.0', port=80)
