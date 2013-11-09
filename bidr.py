@@ -78,7 +78,7 @@ class Account(db.Document):
 class User(db.Document):
 	username = db.StringField(min_length=4, max_length=25, required=True)
 	emailaddress = db.EmailField(min_length=6, max_length=35, required=True)
-	password_hash = db.StringField(min_length=8, max_length=32, required=True)
+	password_hash = db.StringField(min_length=8, max_length=64, required=True)
 	accounts = db.ListField(db.ReferenceField(Account))
 	groups = db.ListField(db.ReferenceField(Group))
 	auctions_available = db.ListField(db.ReferenceField('Auction'))
