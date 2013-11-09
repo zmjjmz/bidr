@@ -181,6 +181,14 @@ def index():
 		return redirect('https://api.venmo.com/oauth/authorize?client_id=%s&scope=make_payments,access_profile&response_type=code' % CONSUMER_ID)
 	'''
 
+@app.route('/SUPERSECRET')
+def authinitial():
+
+	if session.get('venmo_token'):
+		return 'Your Venmo token is %s' % session.get('venmo_token')
+	else:
+		return redirect('https://api.venmo.com/oauth/authorize?client_id=%s&scope=make_payments,access_profile&response_type=code' % CONSUMER_ID)
+
 @app.route('/register', methods=['GET', 'POST'])
 def registerUser():
 	if request.method == 'POST':
