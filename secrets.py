@@ -1,3 +1,0 @@
-CONSUMER_ID = 1473
-CONSUMER_SECRET = "4NVgp4GnmqZQMqCSwxMxfeNjW59wzSCN"
-APP_SECRET = "wYJuQHCcQfdCfvpHteGKjwZ6" # randomly generated

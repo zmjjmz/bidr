@@ -4,7 +4,6 @@
 @created: Nov 08 2013
 @author: Brendan Ashby & Zach Jablons
 @summary: bidr is a bidding system utilizing social networks
-@copyright: Copyright 2013 - All Rights Reserved
 @license: GPLv3
 '''
 
@@ -14,6 +13,11 @@ import time
 import os
 import logging
 import argparse
+from sqlite3 import dbapi2 as sqlite3
+
+# Import - Bidr libraries/vars
+import src/database
+from src/secrets import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET, SECRET_KEY_DB, USERNAME_DB, PASSWORD_DB
 
 # Initiate Logging Globals
 logging.basicConfig(level=logging.DEBUG)
@@ -31,23 +35,22 @@ except ImportError:
 	log.error("Failed to import Python Requests Library. Install it: http://www.python-requests.org/en/latest/")
 	sys.exit()
 
-# Build the Flask App
+#######################
+# Build the Flask App #
+#######################
 from secrets import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET
 app = Flask(__name__)
 app.secret_key = APP_SECRET
 # App debugging | Comment out when deploying!!!
 app.debug = True
-
 # Load default config and override config from an environment variable
-'''
 app.config.update(dict(
 	DATABASE='/db/bidr.db',
 	DEBUG=True,
-	SECRET_KEY='VPzMCCNUT5FWj6qD', # randomly generated
-	USERNAME='bidr',
-	PASSWORD='default'
+	SECRET_KEY=SECRET_KEY_DB, # randomly generated
+	USERNAME=USERNAME_DB,
+	PASSWORD=PASSWORD_DB # randomly generated
 ))
-'''
 
 @app.route('/')
 def index():
@@ -77,6 +80,27 @@ def oauth_authorized():
 		return 'Success! Token is %s' % session.get('venmo_token')
 	else:
 		return "Failed to get a token bro. Fix dat shit now."
+
+@app.route('/dashboard')
+def auctions():
+	''' list active auctions '''
+	return "This is a listing of all actions relevent to a user"
+
+@app.route('/auction/<int:auction_id>')
+def auction(auction_id):
+	''' list active auctions '''
+	return "This is a listing of an auction with ID %d" % auction_id
+
+@app.route('/user/<string:username>/settings')
+def auctions(username):
+	''' list settings for user ( must be logged in ) '''
+	return "This is the settings for user with username: %s" % username
+
+@app.route('/user/<string:username>')
+def auctions(username):
+	''' list active auctions '''
+	return "This is a public profile relevent to username: %s" % username
+
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=80)
