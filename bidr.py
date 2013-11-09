@@ -16,8 +16,8 @@ import argparse
 from sqlite3 import dbapi2 as sqlite3
 
 # Import - Bidr libraries/vars
-import src/database
-from src/secrets import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET, SECRET_KEY_DB, USERNAME_DB, PASSWORD_DB
+from bidrlib import database
+from bidrlib.secrets import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET, SECRET_KEY_DB, USERNAME_DB, PASSWORD_DB
 
 # Initiate Logging Globals
 logging.basicConfig(level=logging.DEBUG)
@@ -38,7 +38,6 @@ except ImportError:
 #######################
 # Build the Flask App #
 #######################
-from secrets import CONSUMER_ID, CONSUMER_SECRET, APP_SECRET
 app = Flask(__name__)
 app.secret_key = APP_SECRET
 # App debugging | Comment out when deploying!!!
@@ -82,22 +81,22 @@ def oauth_authorized():
 		return "Failed to get a token bro. Fix dat shit now."
 
 @app.route('/dashboard')
-def auctions():
+def dashboard():
 	''' list active auctions '''
 	return "This is a listing of all actions relevent to a user"
 
 @app.route('/auction/<int:auction_id>')
-def auction(auction_id):
+def auctionListing(auction_id):
 	''' list active auctions '''
 	return "This is a listing of an auction with ID %d" % auction_id
 
 @app.route('/user/<string:username>/settings')
-def auctions(username):
+def userSettings(username):
 	''' list settings for user ( must be logged in ) '''
 	return "This is the settings for user with username: %s" % username
 
 @app.route('/user/<string:username>')
-def auctions(username):
+def userProfile(username):
 	''' list active auctions '''
 	return "This is a public profile relevent to username: %s" % username
 
