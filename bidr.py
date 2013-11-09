@@ -27,6 +27,7 @@ log = logging.getLogger('BIDRLOG')
 # Imports - Dependancies
 try:
 	from flask import Flask, request, redirect, session, render_template, flash
+	from werkzeug.security import generate_password_hash, check_password_hash
 except ImportError:
 	log.error("Failed to import Flask Library. Install it: http://flask.pocoo.org/")
 	sys.exit()
@@ -40,6 +41,7 @@ try:
 	from wtforms.ext.dateutil.fields import DateTimeField
 except ImportError:
 	log.error("Failed to import Python WTForms Library. Install it: https://pypi.python.org/pypi/WTForms")
+	log.error("If you are still seeing errors you may still need to install python-dateutils. Install it: http://labix.org/python-dateutil")
 	sys.exit()
 try:
 	from flask.ext.mongoengine import MongoEngine, MongoEngineSessionInterface
@@ -145,14 +147,17 @@ def index():
 	else:
 		return redirect('https://api.venmo.com/oauth/authorize?client_id=%s&scope=make_payments,access_profile&response_type=code' % CONSUMER_ID)
 	'''
+
 @app.route('/register', methods=['GET', 'POST'])
 def registerUser():
 	if request.method == 'POST':
 		form = RegistrationForm(request.form)
 		if form.validate():
 			if len(User.objects(username=request.form['username'])) == 0:
-				user = User(username=request.form['username'], emailaddress=request.form['email'], password_hash=request.form['password']).save()
-				return redirect('user/%s' % user.username) 
+				user = User(username=request.form['username'], emailaddress=request.form['email'], password_hash=generate_password_hash(request.form['password'])).save()
+				session['authenticated'] = True
+				session['username'] = user.username
+				return redirect('/dashboard') 
 			else:
 				flash("Username is already taken.", category="warning")
 				return render_template('register.html', form=form)
@@ -170,7 +175,8 @@ def loginUser():
 	if request.method == 'POST':
 		form = LoginForm(request.form)
 		if form.validate():
-			if len(User.objects(username=request.form['username'], password_hash=request.form['password'])) == 1:
+			matches = User.objects(username=request.form['username'])
+			if len(matches) == 1 and check_password_hash(matches.first().password_hash, request.form['password']):
 				session['authenticated'] = True
 				session['username'] = request.form['username']
 				return redirect('/dashboard') 
