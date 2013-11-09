@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+	<title>OpOp | Spice Mining v0.1</title>
+	
+	<!-- Metadata -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="Opposing Opinions' (OpOp.io) Spice Mining Web Portal">
+	<meta name="author" content="Brendan">
+
+  <!-- Initial CSS -->
+  <link rel="stylesheet" href="assets/css/normalize.css">
+	
+	<!-- Bootstrap -->
+	<link href="assets/css/bootstrap.cyborg.min.css" rel="stylesheet" media="screen">
+	<link href="assets/css/bootstrap-glyphicons.css" rel="stylesheet">
+
+	<!-- Custom CSS-->
+	<link href="assets/css/opop.spice.core.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+  <!-- Header Content -->
+  <script type="text/x-handlebars" data-template-name="header">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="container">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-tint"></span> OpOp Spice Mining</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage Your Spice <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Status & Inventory</a></li>
+            <li><a href="#">Transaction History</a></li>
+            <li role="presentation" class="divider"></li>
+            <li><a href="#">Spend Your Spice</a></li>
+          </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/00000000000000000000000000000000.jpg?d=retro&s=22&r=x" /> Hello, Anonymous <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Log In</a></li>
+            <li class="hidden"><a href="#">Log Out</a></li>
+            <li><a href="#">Sign Up</a></li>
+            <li role="presentation" class="divider"></li>
+            <li class="disabled"><a href="#">Account Settings</a></li>
+          </ul>
+          </li>
+        </ul>
+        </div><!-- /.navbar-collapse -->
+      </div>
+    </nav>
+  </script>
+	
+  <!-- Footer Content -->
+  <script type="text/x-handlebars" data-template-name="footer">
+    <hr>
+    <footer>
+      <p class="text-center">&copy; Opposing Opinions 2013</p>
+    </footer>
+  </script>
+
+  <!-- Persistent Page Content -->
+  <script type="text/x-handlebars">
+    {{render header}}
+    {{outlet}}
+    {{render footer}}
+  </script>
+
+  <!-- Index Page Content -->
+  <script type="text/x-handlebars" data-template-name="index">
+    <div class="splash">
+      <div class="container">
+        <div class="col-lg-12 well well-lg text-center">
+        <h3>Spice Mining Command & Control</h3>
+          <p class="text-muted">"the spice must flow" - Baron Harkonnen</p>
+        </blockquote>
+        {{#linkTo get-started}}<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Get Started</button>{{/linkTo}}
+        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-info-sign"></span> Learn more</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="body-content">
+      <div class="container">
+        <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Harvest Spice</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-eye-open"></span> Manage Spice</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-briefcase"></span> Invest Spice</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </script>
+
+  <!-- Get Started Page Content -->
+  <script type="text/x-handlebars" data-template-name="get-started">
+  <div class="container">
+    <div class="col-lg-12">
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step 1: Create your OpOp Spice Mining account</h3>
+        </div>
+        <div class="panel-body">
+          <div class="well text-center">
+            <p>You need an account before you can start mining with us. Just click the button below.</p>
+            <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> Create Account</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step 2: Link your Twitch.Tv account</h3>
+        </div>
+        <div class="panel-body">
+          <div class="well text-center">
+              <p>Twitch.tv makes this process quite painless. Just click the button below.</p>
+              <button type="button" class="btn btn-info"><img height="18px" src="assets/images/twitch_icon_dark.png" alt="connect to twitch"> Connect to Twitch.tv</button>
+          </div>
+          <hr>
+          <p><span class="label label-danger">Q:</span> Why do I need to to this?</p>
+          <p><span class="label label-success">A:</span> <span class="text-warning">The OpOp Spice Mining Market</span> monitors who is watching our streamers by keeping a close eye on who is in our chatrooms during live stream sessions. We <span class="text-warning">cross reference</span> the Twitch.tv accounts in the chatroom against the Twitch.tv accounts linked with OpOp Spice Mining accounts. Spice is deposited into the accounts of <span class="text-warning">Spice Miners</span> who have matching accounts.</p>
+          <hr>
+          <p><span class="label label-danger">Q:</span> Why not just let me use my Twitch.tv account then? Why do I need an OpOp account in the first place?</p>
+          <p><span class="label label-success">A:</span> The simple answer is <span class="text-warning">your security matters to us.</span> These days, a lot of money can be tied to your Twitch.tv account. Channel Subscriptions and Twitch.tv Turbo to name a few. It is safer if we keep our hands off your Twitch.tv account. Giving us access to your account allows us to do more with your account than needed, so let's <abbr title="Keep It Simple Stupid">KISS</abbr>.</p>
+          <hr>
+          <p><span class="label label-danger">Q:</span> So what exactly are you going to do with my Twitch.tv account?</p>
+          <p><span class="label label-success">A:</span> All we are going to do is make sure you can <span class="text-warning">properly authenticate</span> to it. By doing this, you show us you have access to the account and we can safely assume you own it.</p>
+          <hr>
+          <p><span class="label label-danger">Q:</span> Any small print I should know about?</p>
+          <p><span class="label label-success">A:</span> We just want to point out a few things. You can only link a <span class="text-warning">single</span> Twitch.tv account to your OpOp account. You can <span class="text-warning">not link the same</span> Twitch.tv account to multiple OpOp accounts.</p>
+        </div>
+      </div>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h3 class="panel-title">Step 3: Start mining for Spice</h3>
+        </div>
+        <div class="panel-body">
+          <div class="well text-center">
+            <p>You need an account before you can start mining with us. Just click the button below.</p>
+            <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> Create Account</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+            
+  </script>
+
+	<!-- JavaScript Imports -->
+	<script src="assets/js/libs/jquery-1.9.1.js"></script> 
+  
+  <!-- Ember Dependancies -->
+  <script src="assets/js/libs/handlebars-1.0.0.js"></script>
+  <script src="assets/js/libs/ember-1.0.0-rc.7.js"></script>
+
+  <script src="assets/js/libs/moment.min.js"></script>
+  <script src="assets/js/libs/bootstrap.min.js"></script>
+
+  <!-- Enable responsive features in IE8 -->
+  <script src="assets/js/libs/respond.min.js"></script>
+  
+  <!-- Custom OpOp JS -->
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/opop.spice.core.js"></script>
+  </body>
+</html>

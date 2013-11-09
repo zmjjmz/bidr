@@ -37,7 +37,7 @@ except ImportError:
 	log.error("Failed to import Python Requests Library. Install it: http://www.python-requests.org/en/latest/")
 	sys.exit()
 try:
-	from wtforms import Form, BooleanField, StringField, validators, PasswordField, SubmitField, TextAreaField, DecimalField
+	from wtforms import Form, BooleanField, StringField, validators, PasswordField, SubmitField, TextAreaField, DecimalField, RadioField
 	from wtforms.ext.dateutil.fields import DateTimeField
 except ImportError:
 	log.error("Failed to import Python WTForms Library. Install it: https://pypi.python.org/pypi/WTForms")
@@ -78,7 +78,10 @@ class Account(db.Document):
 class User(db.Document):
 	username = db.StringField(min_length=4, max_length=25, required=True)
 	emailaddress = db.EmailField(min_length=6, max_length=35, required=True)
-	password_hash = db.StringField(min_length=8, max_length=64, required=True)
+	password_hash = db.StringField(min_length=8, max_length=66, required=True)
+	friends = db.ListField(db.ReferenceField('User'))
+	friend_requests_pending = db.ListField(db.ReferenceField('User'))
+	friend_requests_sent = db.ListField(db.ReferenceField('User'))
 	accounts = db.ListField(db.ReferenceField(Account))
 	groups = db.ListField(db.ReferenceField(Group))
 	auctions_available = db.ListField(db.ReferenceField('Auction'))
@@ -135,6 +138,35 @@ class AuctionForm(Form):
 	isPublic = BooleanField("List publicly")
 	submit = SubmitField('Create')
 
+class editUserPasswordForm(Form):
+	currentPassword = PasswordField('Current Password', [validators.InputRequired(message=(u'You must supply your current password.')), validators.Length(min=8, max=32, message=(u'Your current password will be atleast 8 and no more than 32 characters.'))])
+	newPassword = PasswordField('New Password', [validators.InputRequired(message=(u'You must supply a new password.')), validators.Length(min=8, max=32, message=(u'Your new password must be atleast 8 and no more than 32 characters.')), validators.EqualTo('confirmNewPassword', message='New passwords must match.')])
+	confirmNewPassword = PasswordField('Retpye New Password', [validators.InputRequired(message=(u'You must retpye your new password.')), validators.Length(min=8, max=32, message=(u'Your retyped new password must be atleast 8 and no more than 32 characters.'))])
+	submit = SubmitField('Change Password')
+
+class searchUserForm(Form):
+	searchVector = RadioField('Match Against', choices=['User Email Address', 'Username'])
+	emailaddress = StringField('Email Address', [validators.Length(min=6, max=35, message=(u'An email address to be searched for must be atleast 6 and no more than 35 characters.')), validators.Email(message=(u'Invalid target email address format.'))])
+	username = StringField('Username', [validators.Length(min=4, max=25, message=(u'A username to be searched for must be atleast 4 and no more than 25 characters.'))])
+
+class sendFriendRequestForm(Form):
+	username = StringField('Username', [validators.Length(min=4, max=25, message=(u'A username to be friended must be atleast 4 and no more than 25 characters.'))])
+	emailaddress = StringField('Email Address', [validators.Length(min=6, max=35, message=(u'An email address to be friended must be atleast 6 and no more than 35 characters.')), validators.Email(message=(u'Invalid email address format.'))])
+	submit = SubmitField('Send Request')
+
+class acceptFriendRequestForm(Form):
+	username = StringField('Username', [validators.Length(min=4, max=25, message=(u'A username to be friended must be atleast 4 and no more than 25 characters.'))])
+	emailaddress = StringField('Email Address', [validators.Length(min=6, max=35, message=(u'An email address to be friended must be atleast 6 and no more than 35 characters.')), validators.Email(message=(u'Invalid email address format.'))])	
+	submit = SubmitField('Accept Request')
+
+class createGroupForm(Form):
+	name = StringField('Group Name', [validators.InputRequired(message=(u'You must supply your group with a name.')), validators.Length(min=5, max=255, message=(u'Your group name should be atleast 5 and no more than 255 characters.'))])
+	#users = ListField(db.ReferenceField('User'))
+	submit = SubmitField('Create Group')
+
+class addToGroupForm(Form):
+	username = StringField('Username', [validators.InputRequired(message=(u'You must supply a username to add to a group.'))])
+	submit = SubmitField('Add user to group')
 
 @app.route('/')
 def index():
@@ -267,28 +299,199 @@ def createAuction():
 @app.route('/auction/<string:auction_id>')
 def auctionListing(auction_id):
 	''' list active auctions '''
-	return "This is a listing of an auction with ID %s" % auction_id
 
-@app.route('/user/<string:username>/settings')
+	if 'authenticated' in session:
+		user = User.objects(username=session['username']).first()
+		match = Auction.objects(id=auction_id).first()
+		valid = False
+		for _list in [user.auctions_available, user.auctions_in, user.auctions_pending, user.auctions_past]:
+			if match in _list:
+				valid = True
+				break
+		if valid:
+			return "You may view this auction."
+		else:
+			return "You are not allowed to view this auction."
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/user/<string:username>/settings', methods=['GET'])
 def userSettings(username):
 	''' list settings for user ( must be logged in ) '''
 	if 'authenticated' in session and username == session['username']:
-		if len(User.objects(username=username)):
-			return "Can Edit %s" % username
+		matches = User.objects(username=username)
+		if len(matches):
+			if request.method == "GET":
+				return render_template('editUser.html', user=matches.first())
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
 		else:
-			return "Auth'd but user DNE. Which cannot happen but hey let's catch this corner case anyway."
+			abort(404)
 	else:
-		return "You are not authenticated to do that. Try <a href=\"/login\">logging</a> in first."
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/user/<string:username>/settings/changepassword', methods=['GET', 'POST'])
+def changeUserPassword(username):
+	if 'authenticated' in session and username == session['username']:
+		matches = User.objects(username=username)
+		if len(matches):
+			if request.method == 'POST':
+				editPasswordForm = editUserPasswordForm(request.form)
+				if editPasswordForm.validate():
+					if check_password_hash(matches.first().password_hash, request.form['currentPassword']):
+						# Do user edits TODO: actually edit the values and allow for more forms and stuff here
+						return "Good Job."
+					else:
+						flash("Invalid value for the current user password.", category="warning")
+						return render_template('editUser_password.html', form=editPasswordForm, user=matches.first())
+				else:
+					return render_template('editUser_password.html', form=editPasswordForm, user=matches.first())
+			elif request.method == "GET":
+				form = editUserPasswordForm()
+				return render_template('editUser_password.html', form=form, user=matches.first())
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
+		else:
+			abort(404)
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/user/<string:username>/settings/sendfriendrequest', methods=['GET', 'POST'])
+def sendFriendRequest(username):
+	if 'authenticated' in session and username == session['username']:
+		matches = User.objects(username=username)
+		if len(matches):
+			if request.method == 'POST':
+				aSendFriendRequestForm = sendFriendRequestForm(request.form)
+				if aSendFriendRequestForm.validate():
+					target = User.objects(username=request.form['username'])
+					target.update_one(add_to_set__friend_requests_pending=matches.first())
+					matches.update_one(add_to_set__friend_requests_sent=target.first())
+					flash("Request Sent to %s" % target.first().username)
+					form = sendFriendRequestForm()
+					return render_template('editUser_sendfriendrequest.html', form=form, user=matches.first())
+				else:
+					return render_template('editUser_sendfriendrequest.html', form=aSendFriendRequestForm, user=matches.first())
+			elif request.method == "GET":
+				form = sendFriendRequestForm()
+				return render_template('editUser_sendfriendrequest.html', form=form, user=matches.first())
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
+		else:
+			abort(404)
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/user/<string:username>/settings/acceptfriendrequest', methods=['GET', 'POST'])
+def acceptFriendRequest(username):
+	if 'authenticated' in session and username == session['username']:
+		matches = User.objects(username=username)
+		if len(matches):
+			if request.method == 'POST':
+				aAcceptFriendRequestForm = acceptFriendRequestForm(request.form)
+				if aAcceptFriendRequestForm.validate():
+					# Do user edits TODO: actually edit the values and allow for more forms and stuff here
+					target = User.objects(username=request.form['username'])
+					target.update_one(pull__friend_requests_sent=matches.first())
+					matches.update_one(pull__friend_requests_pending=target.first())
+					# Add each other to friends
+					target.update_one(add_to_set__friends=matches.first())
+					matches.update_one(add_to_set__friends=target.first())
+					flash("Good Job accepting a friend request.")
+					form = acceptFriendRequestForm()
+					return render_template('editUser_acceptfriendrequest.html', form=form, user=matches.first())
+				else:
+					return render_template('editUser_acceptfriendrequest.html', form=aAcceptFriendRequestForm, user=matches.first())
+			elif request.method == "GET":
+				form = acceptFriendRequestForm()
+				return render_template('editUser_acceptfriendrequest.html', form=form, user=matches.first())
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
+		else:
+			abort(404)
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/user/<string:username>/settings/creategroup', methods=['GET', 'POST'])
+def createGroup(username):
+	if 'authenticated' in session and username == session['username']:
+		matches = User.objects(username=username)
+		if len(matches):
+			if request.method == 'POST':
+				aGroupForm = createGroupForm(request.form)
+				if aGroupForm.validate():
+					group = Group(name=request.form['name']).save()
+					User.objects(username=username).update_one(add_to_set__groups=group)
+					# Do user edits TODO: actually edit the values and allow for more forms and stuff here
+					#target = User.objects(username=request.form['username'])
+					#target.update_one(pull__friend_requests_sent=matches.first())
+					#matches.update_one(pull__friend_requests_pending=target.first())
+					# Add each other to friends
+					#target.update_one(add_to_set__friends=matches.first())
+					#matches.update_one(add_to_set__friends=target.first())
+					flash("Good Job creating a new group.")
+					form = createGroupForm()
+					return render_template('createGroup.html', form=form, user=matches.first())
+				else:
+					return render_template('createGroup.html', form=aGroupForm, user=matches.first())
+			elif request.method == "GET":
+				form = createGroupForm()
+				return render_template('createGroup.html', form=form, user=matches.first())
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
+		else:
+			abort(404)
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
+
+@app.route('/group/<string:group_id>', methods=['GET', 'POST'])
+def viewGroup(group_id):
+	if 'authenticated' in session:
+		user = User.objects(username=session['username']).first()
+		group = Group.objects(id=group_id).first()
+		if group in user.groups:
+			if request.method == 'POST':
+				anAddToGroupForm = addToGroupForm(request.form)
+				if anAddToGroupForm.validate():
+					user = User.objects(username=request.form['username'])
+					Group.objects(id=group_id).update_one(add_to_set__users=user)
+					flash("Good Job adding a user to a group.")
+					form = addToGroupForm()
+					return render_template('addToGroup.html', form=form, user=user, group=group)
+				else:
+					return render_template('addToGroup.html', form=anAddToGroupForm, user=user, group=group)
+			elif request.method == "GET":
+				form = addToGroupForm()
+				return render_template('addToGroup.html', form=form, user=user, group=group)
+			else:
+				flash("Invalid HTTP Request.", category="warning")
+				return redirect('/')
+		else:
+			flash("You don't have a group by this name", category='warning')
+			redirect('/')
+	else:
+		flash("You must authenticate first.", category="warning")
+		return redirect("/login")
 
 @app.route('/user/<string:username>')
 def userProfile(username):
 	''' list active auctions '''
 	user = User.objects(username=username)
 	if not len(user):
-		return "No user found with this username."
+		abort(404)
 	else:
 		return render_template('userProfile.html', user=user.first())
-		#return "This is a public profile relevent to username: %s | email: %s | password_hash: %s" % (user.username, user.emailaddress, user.password_hash)
 
 @app.errorhandler(404)
 def page_not_found(error):

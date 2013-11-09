@@ -1,12 +1,71 @@
-<!DOCTYPE HTML PUBLIC>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	{% block head %}
-    	<link rel="stylesheet" href="style.css" />
-    	<title>Bidr - {% block title %}{% endblock %} - Bid with friends</title>
+		<meta charset="utf-8">
+		<title>Bidr - {% block title %}{% endblock %} - Bid with friends</title>
+
+		<!-- Metadata -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="Opposing Opinions' (OpOp.io) Spice Mining Web Portal">
+		<meta name="author" content="Brendan">
+
+		<!-- Initial CSS -->
+  		<link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+	
+		<!-- Bootstrap -->
+		<link href="{{ url_for('static', filename='css/bootstrap.cyborg.min.css') }}" rel="stylesheet" media="screen">
+		<link href="{{ url_for('static', filename='css/bootstrap-glyphicons.css') }}" rel="stylesheet">
+
+		<!-- Custom CSS-->
+		<link href="{{ url_for('static', filename='css/opop.spice.core.css') }}" rel="stylesheet">
     {% endblock %}
 </head>
 <body>
+	<div id="header">
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	      <!-- Brand and toggle get grouped for better mobile display -->
+	      <div class="container">
+	        <div class="navbar-header">
+	        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+	          <span class="sr-only">Toggle navigation</span>
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	        </button>
+	        <a class="navbar-brand" href="/"><span class="glyphicon glyphicon-tint"></span> Bidr</a>
+	        </div>
+
+	        <!-- Collect the nav links, forms, and other content for toggling -->
+	        <div class="collapse navbar-collapse navbar-ex1-collapse">
+	        <ul class="nav navbar-nav">
+	          <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">View Dashboard <b class="caret"></b></a>
+	          <ul class="dropdown-menu">
+	            <li><a href="#">Active Listings</a></li>
+	            <li><a href="#">Transaction History</a></li>
+	            <li role="presentation" class="divider"></li>
+	            <li><a href="#">Create an Auction</a></li>
+	          </ul>
+	          </li>
+	        </ul>
+	        <ul class="nav navbar-nav navbar-right">
+	          <li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="{{ url_for('static', filename='images/00000000000000000000000000000000.png') }}" /> Hello, Anonymous <b class="caret"></b></a>
+	          <ul class="dropdown-menu">
+	            <li><a href="#">Log In</a></li>
+	            <li class="hidden"><a href="#">Log Out</a></li>
+	            <li><a href="#">Sign Up</a></li>
+	            <li role="presentation" class="divider"></li>
+	            <li class="disabled"><a href="#">Account Settings</a></li>
+	          </ul>
+	          </li>
+	        </ul>
+	        </div><!-- /.navbar-collapse -->
+	      </div>
+	    </nav>
+	</div>
 	<div id="content">
 	{% block flashErrors %}
 		{% with messages = get_flashed_messages() %}
@@ -20,12 +79,55 @@
 		{% endwith %}
 	{% endblock %}
 	{% block content %}
-		<h1>Welcome to <b>Bidr</b></h1>
+      <div class="container">
+        <div class="col-lg-12 well well-lg text-center">
+        <h3>Welcome to Bidr</h3>
+          <p class="text-muted">"bidding with friends" - Some Anon</p>
+        </blockquote>
+        <div class="splash">	
 		{% if 'authenticated' in session %}
-			<p>Hello, {{ session['username']}}. View your <a href="/dashboard">dashboard</a>.</p>
+			<a href="/dashboard"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Get Started</button></a>
 		{% else %}
-			<p><a href="/register">Register</a> an account or <a href="/login">login</a> to an existing account.</p>
+			<p><a href="/register"><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-info-sign"></span> Register</button></a> an account or <a href="/login"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Login</button></a> to an existing account.</p>
 		{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="body-content">
+      <div class="container">
+        <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Connect with Friends</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-warning">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-eye-open"></span> Manage Listings</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      <div class="panel-column col-lg-4 col-sm-6 col-xs-12">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-briefcase"></span> Invest in your Future</h3>
+          </div>
+          <div class="panel-body">
+            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
     {% endblock %}
     </div>
     <div id="footer">
@@ -33,5 +135,16 @@
         	&copy; Copyright 2013 - <a href="/">Bidr</a>
         {% endblock %}
     </div>
+    {% block javascript %}
+		<!-- JavaScript Imports -->
+		<script src="{{ url_for('static', filename='js/libs/jquery-1.9.1.js') }}"></script> 
+  
+		<!-- Ember Dependancies -->
+		<script src="{{ url_for('static', filename='js/libs/moment.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/libs/bootstrap.min.js') }}"></script>
+
+		<!-- Enable responsive features in IE8 -->
+		<script src="{{ url_for('static', filename='js/libs/respond.min.js') }}"></script>
+    {% endblock %}
 </body>
 </html>

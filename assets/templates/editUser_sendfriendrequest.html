@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+{% block title %}{{user.username}}'s Account Settings{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>{{user.username}}: Send friend requests</h1>
+    <form method="POST" action="/user/{{user.username}}/settings/sendfriendrequest">
+        <div>{{ form.username.label }}: {{ form.username() }}</div>
+        {% if form.username.errors %}
+            <ul class="errors">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.emailaddress.label }}: {{ form.emailaddress() }}</div>
+        {% if form.emailaddress.errors %}
+            <ul class="errors">{% for error in form.emailaddress.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div>{{ form.submit() }}</div>
+    </form>
+    <ul class='sentFriendRequests'>
+        {% for request in user.friend_requests_sent %}
+            <li>Request Pending For user: {{ request.username }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+{% block title %}{{user.username}}'s Account Settings{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+    .errors { color: red;}
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>{{user.username}}'s account settings</h1>
+    <ul>
+        <li><a href="/user/{{user.username}}/settings/changepassword"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Change Password</button></a></li>
+        <li><a href="/user/{{user.username}}/settings/sendfriendrequest"><button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-fire"></span> Send Friend Requests</button></a></li>
+        <li><a href="/user/{{user.username}}/settings/acceptfriendrequest"><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-fire"></span> Accept Friend Requests</button></a></li>
+        <li><a href="/user/{{user.username}}/settings/creategroup"><button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-fire"></span> Create New Group</button></a></li>
+    </ul>
+    <ul class='friendsListing'>
+        {% for friend in user.friends %}
+            <li>You have a friend named: {{ friend.username }}</li>
+        {% endfor %}
+    </ul>
+    <ul class='groupListing'>
+        {% for group in user.groups %}
+            <li>You have a group called: <a href="/group/{{ group.id }}">{{ group.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
